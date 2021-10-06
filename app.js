@@ -1,4 +1,5 @@
 const mysql = require('mysql')
+const faker = require('faker')
 
 // dotenv config
 require('dotenv/config')
@@ -12,11 +13,22 @@ const connection = mysql.createConnection({
     database: process.env.database
 })
 
-const q = 'SELECT COUNT(*) AS total FROM users'
+// Inserting a lot of data
+var data = []
 
-connection.query(q,  (error, results, fields) => {
-    if (error) throw error
-    console.log(results)
-})
+// Inserting 500 random users
+for(var i = 0; i < 500; i++) {
+    data.push([
+    faker.internet.email(),
+    faker.date.past()
+    ])
+}
+
+var q = 'INSERT INTO users (email, created_at) VALUES ?';
+ 
+connection.query(q, [data], function(err, result) {
+  console.log(err);
+  console.log(result);
+});
 
 connection.end()
